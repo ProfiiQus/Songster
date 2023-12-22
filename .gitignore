@@ -1,0 +1,5 @@
+Songster.Bot/appsettings.json
+**/bin
+**/obj
+Songster.Bot/storage.json
+.vscode/
