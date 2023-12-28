@@ -25,7 +25,7 @@ public class QueueCommand : ICommand
             Link = command.Data.Options.First().Value.ToString()!
         };
 
-        // Instantiate embed for response.
+        // Instantiate embed builder for response.
         var embedBuilder = new EmbedBuilder();
 
         // Attempt to queue the song.

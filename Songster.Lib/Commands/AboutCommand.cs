@@ -17,6 +17,7 @@ public class AboutCommand : ICommand
     /// </summary>
     public async Task Execute(StorageService storage, SocketSlashCommand command)
     {
+        // Instantiate embed builder for response.
         var embedBuilder = new EmbedBuilder()
             .WithTitle("About the Songster")
             .WithDescription("👋 Hello there. Ich bin Songster, the Hipster song bot. I'm here to **recommend some new bangers** you can listen to throughout the day.")
