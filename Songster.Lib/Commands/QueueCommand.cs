@@ -19,13 +19,17 @@ public class QueueCommand : ICommand
     /// </summary>
     public async Task Execute(StorageService storage, SocketSlashCommand command)
     {
+        // Build a new song object from the provided arguments.
         var song = new Song {
             UserId = command.User.Id,
             Link = command.Data.Options.First().Value.ToString()!
         };
 
+        // Instantiate embed for response.
         var embedBuilder = new EmbedBuilder();
 
+        // Attempt to queue the song.
+        // Respond with a success or failure message.
         if(storage.Queue(song)) {
             embedBuilder = new EmbedBuilder()
                 .WithTitle("Banger successfully queued!")
