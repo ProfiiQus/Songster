@@ -1,3 +1,3 @@
 # Songster
 
-A work in progress Discord bot to guess the daily song.
+Songster is a Discord bot that allows you to queue daily songs and then guess who guessed that particular song with your friends.
