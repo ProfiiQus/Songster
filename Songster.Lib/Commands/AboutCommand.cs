@@ -4,8 +4,17 @@ using Songster.Lib.Services;
 
 namespace Songster.Lib.Commands;
 
+/// <summary>
+/// Class representation of a an about command.
+/// </summary>
+/// <remarks>
+/// This command is primarily used to display information about the bot to the user.
+/// </remarks>
 public class AboutCommand : ICommand
 {
+    /// <summary>
+    /// Performs the execution of the command.
+    /// </summary>
     public async Task Execute(StorageService storage, SocketSlashCommand command)
     {
         var embedBuilder = new EmbedBuilder()

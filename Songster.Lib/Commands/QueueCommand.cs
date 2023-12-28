@@ -5,9 +5,18 @@ using Songster.Lib.Services;
 
 namespace Songster.Lib.Commands;
 
+/// <summary>
+/// Class representation of a a queue command.
+/// </summary>
+/// <remarks>
+/// The purpose of this command is to allow users to queue new songs.
+/// </remarks>
 public class QueueCommand : ICommand
 {
 
+    /// <summary>
+    /// Performs the execution of the command.
+    /// </summary>
     public async Task Execute(StorageService storage, SocketSlashCommand command)
     {
         var song = new Song {
