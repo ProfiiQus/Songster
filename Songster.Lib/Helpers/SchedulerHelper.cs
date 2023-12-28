@@ -5,6 +5,9 @@ using Songster.Lib.Jobs;
 
 namespace Songster.Lib.Helpers;
 
+/// <summary>
+/// Helper class for job scheduling.
+/// </summary>
 public static class SchedulerHelper {
 
     /// <summary>
