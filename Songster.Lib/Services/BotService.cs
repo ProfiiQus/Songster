@@ -43,6 +43,16 @@ public class BotService {
         await Task.Delay(-1);
     }
 
+    /// <summary>
+    /// Sends the given message to the given channel.
+    /// </summary>
+    /// <param name="channelId">Channel Id to send the message to</param>
+    /// <param name="embed">Embed to send</param>
+    public void SendEmbed(ulong channelId, Embed embed) {
+        var channel = _client.GetChannel(channelId) as IMessageChannel;
+        channel?.SendMessageAsync(embed: embed);
+    }
+
     private async Task Client_Ready() {
         var guild = _client.GetGuild(_configuration.GuildId);
         await _slashCommandService.RegisterGuildCommands(guild);

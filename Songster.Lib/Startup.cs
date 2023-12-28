@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Songster.Lib.Jobs;
 using Songster.Lib.Services;
 
 namespace Songster.Lib;
@@ -14,7 +15,8 @@ public static class Startup {
         collection
             .AddSingleton<BotService>()
             .AddSingleton<SlashCommandService>()
-            .AddSingleton<StorageService>();
+            .AddSingleton<StorageService>()
+            .AddSingleton<DailySongJob>();
         return collection;
     }
 
