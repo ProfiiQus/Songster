@@ -61,7 +61,7 @@ class DailySongJob : IJob
             // Send the embed to the channel.
             _bot.SendEmbed(_configuration.DailySongChannelId, song.BuildEmbed());
             // Set the current queuer to the user who queued the song.
-            _storageService.SetCurrentUserId(song.UserId);
+            _storageService.CurrentUserId = song.UserId;
         } catch (EmptyQueueException)
         {
             // The queue is empty - send error embed.
@@ -72,7 +72,7 @@ class DailySongJob : IJob
             _bot.SendEmbed(_configuration.DailySongChannelId, embed.Build());
 
             // Update today's user id to 0.
-            _storageService.SetCurrentUserId(0);
+            _storageService.CurrentUserId = 0;
         }
 
         return Task.CompletedTask;

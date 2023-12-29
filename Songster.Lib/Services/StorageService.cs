@@ -6,6 +6,35 @@ namespace Songster.Lib.Services;
 
 public class StorageService {
 
+
+    /// <summary>
+    /// Current user Id field wrapper.
+    /// Works dynamically with storage to automatically save the value to disk.
+    /// </summary>
+    public ulong CurrentUserId {
+        get {
+            return _storage.CurrentUserId;
+        }
+        set {
+            _storage.CurrentUserId = value;
+            Save();
+        }
+    }
+
+    /// <summary>
+    /// Current dictionary of guesses.
+    /// Works dynamically with storage to automatically save the value to disk.
+    /// </summary>
+    public Dictionary<ulong, bool> HasGuessedToday {
+        get {
+            return _storage.HasGuessedToday;
+        }
+        set {
+            _storage.HasGuessedToday = value;
+            Save();
+        }
+    }
+
     private StorageModel _storage;
 
     public StorageService() {
@@ -51,11 +80,6 @@ public class StorageService {
         _storage.Queue.Remove(song);
         Save();
         return song;
-    }
-
-    public void SetCurrentUserId(ulong userId) {
-        _storage.CurrentUserId = userId;
-        Save();
     }
 
     public void Save() {
