@@ -80,6 +80,12 @@ public class SlashCommandService {
                 .AddOption("user", ApplicationCommandOptionType.User, "Who do you think queued today's banger?", isRequired: true);
 
             await guild.CreateApplicationCommandAsync(command.Build());
+
+            command = new SlashCommandBuilder()
+                .WithName("leaderboard")
+                .WithDescription("Display's the Songster leaderboard");
+
+            await guild.CreateApplicationCommandAsync(command.Build());
         }
         catch(HttpException exception)
         {
