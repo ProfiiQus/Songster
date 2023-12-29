@@ -1,8 +1,8 @@
 using Discord;
-using Discord.Net;
 using Discord.WebSocket;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
+using Songster.Lib.Helpers;
+using Songster.Lib.Jobs;
 using Songster.Lib.Models;
 
 namespace Songster.Lib.Services;
@@ -14,63 +14,36 @@ public class BotService {
     private BotConfiguration _configuration;
 
     /// <summary>
-    /// Discord client.
+    /// Discord service.
     /// </summary>
-    private DiscordSocketClient _client;
+    private DiscordService _discordService;
 
     /// <summary>
     /// Slash command service.
     /// </summary>
     private SlashCommandService _slashCommandService;
 
-    public BotService(IOptions<BotConfiguration> configuration, SlashCommandService slashCommandService) {
+    /// <summary>
+    /// Daily song job.
+    /// </summary>
+    private DailySongJob _dailySongJob;
+
+    public BotService(IOptions<BotConfiguration> configuration, DiscordService discordService, SlashCommandService slashCommandService, DailySongJob dailySongJob) {
         _configuration = configuration.Value;
-        _client = new DiscordSocketClient();
+        _discordService = discordService;
         _slashCommandService = slashCommandService;
+        _dailySongJob = dailySongJob;
     }
 
-    /// <summary>
-    /// Starts the bot.
-    /// </summary>
     public async Task Start() {
-        _client.Log += Log;
-        _client.Ready += Client_Ready;
-        _client.SlashCommandExecuted += _slashCommandService.SlashCommandHandler;
+        // Register the daily song scheduler job.
+        await SchedulerHelper.ScheduleDailySongJob(_dailySongJob);
 
-        await _client.LoginAsync(TokenType.Bot, _configuration.Token);
-        await _client.StartAsync();
+        // Register commands and command handler.
+        _discordService.RegisterSlashCommandHandler(_slashCommandService.SlashCommandHandler);
+        await _discordService.RegisterGuildCommands(_configuration.GuildId);
 
-        await Task.Delay(-1);
-    }
-
-    /// <summary>
-    /// Sends the given message to the given channel.
-    /// </summary>
-    /// <param name="channelId">Channel Id to send the message to</param>
-    /// <param name="embed">Embed to send</param>
-    public void SendEmbed(ulong channelId, Embed embed) {
-        var channel = _client.GetChannel(channelId) as IMessageChannel;
-        channel?.SendMessageAsync(embed: embed);
-    }
-
-    public SocketUser? GetUserById(ulong userId) {
-        return _client.GetUser(userId);
-    }
-
-    private async Task Client_Ready() {
-        var guild = _client.GetGuild(_configuration.GuildId);
-        await _slashCommandService.RegisterGuildCommands(guild);
-
-        await _client.SetActivityAsync(new Game("some absolute bangers"));
-    }
-
-    /// <summary>
-    /// Logs the given message to the console.
-    /// </summary>
-    /// <param name="message">Message to log</param>
-    private Task Log(LogMessage message)
-    {
-        Console.WriteLine(message.ToString());
-        return Task.CompletedTask;
+        // Start the bot
+        await _discordService.Start();
     }
 }

@@ -16,9 +16,6 @@ public class Program {
         // Build service provider.
         var provider = BuildServices();
 
-        // Schedule daily song job.
-        _ = SchedulerHelper.ScheduleDailySongJob(provider);
-
         // Start the Discord bot serving.
         var bot = provider.GetRequiredService<BotService>();
         bot.Start().GetAwaiter().GetResult();

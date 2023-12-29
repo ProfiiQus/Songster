@@ -13,8 +13,9 @@ public static class Startup {
     /// <returns>Collection with added services</returns>
     public static IServiceCollection RegisterServices(IServiceCollection collection) {
         collection
-            .AddSingleton<BotService>()
+            .AddSingleton<DiscordService>()
             .AddSingleton<SlashCommandService>()
+            .AddSingleton<BotService>()
             .AddSingleton<StorageService>()
             .AddSingleton<DailySongJob>();
         return collection;

@@ -55,45 +55,4 @@ public class SlashCommandService {
         await commandLibrary[command.Data.Name].Execute(_storageService, command);
     }
 
-    /// <summary>
-    /// Registers the guild commands.
-    /// </summary>
-    /// <param name="guild">The guild to register the commands to</param>
-    public async Task RegisterGuildCommands(SocketGuild guild) {
-        try
-        {
-            var command = new SlashCommandBuilder()
-                .WithName("about")
-                .WithDescription("About the Songster bot");
-
-            await guild.CreateApplicationCommandAsync(command.Build());
-
-            command = new SlashCommandBuilder()
-                .WithName("queue")
-                .WithDescription("Queue a new banger to daily playlist")
-                .AddOption("link", ApplicationCommandOptionType.String, "Link to YouTube song video", isRequired: true);
-
-            await guild.CreateApplicationCommandAsync(command.Build());
-
-            command = new SlashCommandBuilder()
-                .WithName("guess")
-                .WithDescription("Guess who queued today's banger")
-                .AddOption("user", ApplicationCommandOptionType.User, "Who do you think queued today's banger?", isRequired: true);
-
-            await guild.CreateApplicationCommandAsync(command.Build());
-
-            command = new SlashCommandBuilder()
-                .WithName("leaderboard")
-                .WithDescription("Display's the Songster leaderboard");
-
-            await guild.CreateApplicationCommandAsync(command.Build());
-        }
-        catch(HttpException exception)
-        {
-            // Try to handle errors if any occur
-            var json = JsonConvert.SerializeObject(exception.Errors, Formatting.Indented);
-            Console.WriteLine(json);
-        }
-    }
-
 }

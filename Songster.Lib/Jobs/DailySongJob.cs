@@ -15,12 +15,12 @@ namespace Songster.Lib.Jobs;
 /// It randomly selects a song from the queue and displays it in the provided Discord channel.
 /// Then removes the given song from the queue and enables song guessing til the next day.
 /// </remarks>
-class DailySongJob : IJob
+public class DailySongJob : IJob
 {
     /// <summary>
-    /// Bot service.
+    /// Discord service.
     /// </summary>
-    public BotService _bot { get; set;}
+    public DiscordService _discordService { get; set;}
 
     /// <summary>
     /// Storage service.
@@ -38,10 +38,10 @@ class DailySongJob : IJob
     /// <remarks>
     /// Constructor values are passed by Dependency Injection and not instantiated manually.
     /// </remarks>
-    public DailySongJob(IOptions<BotConfiguration> configuration, BotService bot, StorageService storageService)
+    public DailySongJob(IOptions<BotConfiguration> configuration, DiscordService discordService, StorageService storageService)
     {
         _configuration = configuration.Value;
-        _bot = bot;
+        _discordService = discordService;
         _storageService = storageService;
     }
 
@@ -69,7 +69,7 @@ class DailySongJob : IJob
             // Pop today's song from the queue.
             var song = _storageService.PopRandom();
             // Send the embed to the channel.
-            _bot.SendEmbed(_configuration.DailySongChannelId, song.BuildEmbed());
+            _discordService.SendEmbed(_configuration.DailySongChannelId, song.BuildEmbed());
             // Set the current queuer to the user who queued the song.
             _storageService.CurrentUserId = song.UserId;
         } catch (EmptyQueueException)
@@ -79,7 +79,7 @@ class DailySongJob : IJob
                 .WithTitle("Queue is empty!")
                 .WithColor(Color.Red)
                 .WithDescription("❌ The queue is empty. You can queue a new song using the `/queue` command.");
-            _bot.SendEmbed(_configuration.DailySongChannelId, embed.Build());
+            _discordService.SendEmbed(_configuration.DailySongChannelId, embed.Build());
 
             // Update today's user id to 0.
             _storageService.CurrentUserId = 0;

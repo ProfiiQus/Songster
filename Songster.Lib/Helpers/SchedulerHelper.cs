@@ -13,7 +13,7 @@ public static class SchedulerHelper {
     /// <summary>
     /// Schedules the daily song job every day at 10AM.
     /// </summary>
-    public static async Task ScheduleDailySongJob(ServiceProvider serviceProvider) {
+    public static async Task ScheduleDailySongJob(DailySongJob dailySongJob) {
         // Grab the Scheduler instance from the Factory
         var factory = new StdSchedulerFactory();
         var scheduler = await factory.GetScheduler();
@@ -36,7 +36,7 @@ public static class SchedulerHelper {
             .StartNow()
             .Build();
 
-        scheduler.JobFactory = new DailySongJobFactory(serviceProvider);
+        scheduler.JobFactory = new DailySongJobFactory(dailySongJob);
 
         // Schedule the job using the job and trigger
         await scheduler.ScheduleJob(job, trigger);

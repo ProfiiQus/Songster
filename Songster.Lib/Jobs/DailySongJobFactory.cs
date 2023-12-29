@@ -10,9 +10,9 @@ namespace Songster.Lib.Jobs;
 public class DailySongJobFactory : IJobFactory {
 
     /// <summary>
-    /// The service provider.
+    /// Daily song job.
     /// </summary>
-    private readonly IServiceProvider _serviceProvider;
+    private readonly DailySongJob _dailySongJob;
 
     /// <summary>
     /// Creates a new instance of the daily song job factory.
@@ -21,8 +21,8 @@ public class DailySongJobFactory : IJobFactory {
     /// <remarks>
     /// Constructor values are passed by Dependency Injection and not instantiated manually.
     /// </remarks>
-    public DailySongJobFactory(IServiceProvider serviceProvider) {
-        _serviceProvider = serviceProvider;
+    public DailySongJobFactory(DailySongJob dailySongJob) {
+        _dailySongJob = dailySongJob;
     }
 
     /// <summary>
@@ -30,7 +30,7 @@ public class DailySongJobFactory : IJobFactory {
     /// </summary>
     public IJob NewJob(TriggerFiredBundle bundle, IScheduler scheduler)
     {
-        return _serviceProvider.GetRequiredService<DailySongJob>();
+        return _dailySongJob;
     }
 
     /// <summary>
