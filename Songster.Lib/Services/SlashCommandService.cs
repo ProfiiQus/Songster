@@ -31,12 +31,15 @@ public class SlashCommandService {
 
     private StorageService _storageService;
 
+    private DiscordService _discordService;
+
     /// <summary>
     /// TODO: Add docs
     /// </summary>
     /// <param name="configuration"></param>
-    public SlashCommandService(IOptions<BotConfiguration> configuration, StorageService storageService) {
+    public SlashCommandService(IOptions<BotConfiguration> configuration, DiscordService discordService, StorageService storageService) {
         _configuration = configuration.Value;
+        _discordService = discordService;
         _storageService = storageService;
     }
 
@@ -52,7 +55,7 @@ public class SlashCommandService {
         }
         
         // If defined, run it.
-        await commandLibrary[command.Data.Name].Execute(_storageService, command);
+        await commandLibrary[command.Data.Name].Execute(_storageService, _discordService, command);
     }
 
 }

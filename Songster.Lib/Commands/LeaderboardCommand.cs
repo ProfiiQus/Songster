@@ -13,7 +13,7 @@ public class LeaderboardCommand : ICommand
     /// <summary>
     /// Executes the command's logic.
     /// </summary>
-    public Task Execute(StorageService storage, SocketSlashCommand command)
+    public Task Execute(StorageService storage, DiscordService discordService, SocketSlashCommand command)
     {
         // Instantiate embed builder for response.
         var embedBuilder = new EmbedBuilder()
@@ -30,8 +30,7 @@ public class LeaderboardCommand : ICommand
             return command.RespondAsync(embed: embedBuilder.Build());
         }
 
-        // Get the first user from the top 5 players.
-        var firstUser = command.Channel.GetUserAsync(top5.First().Key).Result;
+        var firstUser = discordService.GetUser(top5.First().Key);
         // Append the first user to the embed.
         embedBuilder.WithDescription($"🏆 **{firstUser.GlobalName}** is currently the best guesser with {top5.First().Value} points.");
         embedBuilder.WithThumbnailUrl(firstUser.GetAvatarUrl());
@@ -41,7 +40,7 @@ public class LeaderboardCommand : ICommand
         // Build top 5 players string.
         int index = 1;
         foreach(var player in top5) {
-            var user = command.Channel.GetUserAsync(player.Key).Result;
+            var user = discordService.GetUser(player.Key);
             topStringBuilder.AppendLine($"{GetRankMedal(index)} **{user.GlobalName}** - {player.Value} points");
             index++;
         }

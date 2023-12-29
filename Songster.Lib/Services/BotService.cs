@@ -39,9 +39,15 @@ public class BotService {
         // Register the daily song scheduler job.
         await SchedulerHelper.ScheduleDailySongJob(_dailySongJob);
 
-        // Register commands and command handler.
-        _discordService.RegisterSlashCommandHandler(_slashCommandService.SlashCommandHandler);
-        await _discordService.RegisterGuildCommands(_configuration.GuildId);
+        // Register the bot's event handlers.
+        _discordService.SetClientReadyHandler(async () => {
+            // Set the bot's activity.
+            await _discordService.SetClientActivity(new Game("some absolute bangers."));
+
+            // Register commands and command handler.
+            _discordService.RegisterSlashCommandHandler(_slashCommandService.SlashCommandHandler);
+            await _discordService.RegisterGuildCommands(_configuration.GuildId);
+        });
 
         // Start the bot
         await _discordService.Start();

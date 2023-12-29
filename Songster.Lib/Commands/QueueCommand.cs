@@ -17,7 +17,7 @@ public class QueueCommand : ICommand
     /// <summary>
     /// Performs the execution of the command.
     /// </summary>
-    public async Task Execute(StorageService storage, SocketSlashCommand command)
+    public async Task Execute(StorageService storage, DiscordService discordService, SocketSlashCommand command)
     {
         // Build a new song object from the provided arguments.
         var song = new Song {

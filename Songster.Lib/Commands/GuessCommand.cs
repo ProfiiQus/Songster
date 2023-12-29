@@ -5,7 +5,7 @@ namespace Songster.Lib.Commands;
 
 public class GuessCommand : ICommand
 {
-    public async Task Execute(StorageService storage, SocketSlashCommand command)
+    public async Task Execute(StorageService storage, DiscordService discordService, SocketSlashCommand command)
     {
         // Parse the guild user from input.
         var guildUser = (SocketGuildUser)command.Data.Options.First().Value;

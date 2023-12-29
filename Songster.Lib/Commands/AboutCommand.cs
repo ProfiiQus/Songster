@@ -15,7 +15,7 @@ public class AboutCommand : ICommand
     /// <summary>
     /// Performs the execution of the command.
     /// </summary>
-    public async Task Execute(StorageService storage, SocketSlashCommand command)
+    public async Task Execute(StorageService storage, DiscordService discordService, SocketSlashCommand command)
     {
         // Instantiate embed builder for response.
         var embedBuilder = new EmbedBuilder()

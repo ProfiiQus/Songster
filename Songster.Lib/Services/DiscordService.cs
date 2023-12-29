@@ -31,7 +31,10 @@ public class DiscordService {
     /// <param name="configuration">Bot configuration object</param>
     public DiscordService(IOptions<BotConfiguration> configuration) {
         _configuration = configuration.Value;
-        _client = new DiscordSocketClient();
+        _client = new DiscordSocketClient(new DiscordSocketConfig {
+            AlwaysDownloadUsers = true,
+            GatewayIntents = GatewayIntents.GuildMembers
+        });
     }
 
     /// <summary>
@@ -56,7 +59,6 @@ public class DiscordService {
     /// </summary>
     public async Task Start() {
         _client.Log += Log;
-        _client.Ready += Client_Ready;
 
         await _client.LoginAsync(TokenType.Bot, _configuration.Token);
         await _client.StartAsync();
@@ -64,10 +66,24 @@ public class DiscordService {
         await Task.Delay(-1);
     }
 
-    private async Task Client_Ready() {
-        var guild = _client.GetGuild(_configuration.GuildId);
+    /// <summary>
+    /// Handles the client ready event.
+    /// </summary>
+    /// <remarks>
+    /// Should be used to register command handlers.
+    /// </remarks>
+    /// <param name="readyFunc">Function that gets run when the client is ready</param>
+    /// <returns></returns>
+    public void SetClientReadyHandler(Func<Task> readyFunc) {
+        _client.Ready += readyFunc;
+    }
 
-        await _client.SetActivityAsync(new Game("some absolute bangers"));
+    /// <summary>
+    /// Sets the client activity.
+    /// </summary>
+    /// <param name="activity">Activity to set</param>
+    public async Task SetClientActivity(IActivity activity) {
+        await _client.SetActivityAsync(activity);
     }
 
     /// <summary>
@@ -75,7 +91,7 @@ public class DiscordService {
     /// </summary>
     /// <param name="guild">The guild to register the commands to</param>
     public async Task RegisterGuildCommands(ulong guildId) {
-        var guild = _client.GetGuild(guildId);
+        var guild = GetGuild(guildId);
         try
         {
             var command = new SlashCommandBuilder()
@@ -113,6 +129,20 @@ public class DiscordService {
     }
 
     /// <summary>
+    /// Gets the guild by the given id.
+    /// </summary>
+    /// <param name="guildId">Guild Id to get</param>
+    /// <returns>SocketGuild object, null if the guild was not found</returns>
+    private SocketGuild? GetGuild(ulong guildId) {
+        foreach(SocketGuild guild in _client.Guilds) {
+            if(guild.Id == guildId) {
+                return guild;
+            }
+        }
+        return null;
+    }
+
+    /// <summary>
     /// Logs the given message to the console.
     /// </summary>
     /// <param name="message">Message to log</param>
@@ -132,7 +162,7 @@ public class DiscordService {
         channel?.SendMessageAsync(embed: embed);
     }
 
-    public SocketUser? GetUserById(ulong userId) {
-        return _client.GetUser(userId);
+    public IUser GetUser(ulong userId) {
+        return _client.Rest.GetUserAsync(userId).Result;
     }
 }

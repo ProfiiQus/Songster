@@ -11,6 +11,8 @@ public interface ICommand {
     /// <summary>
     /// Executes the command's logic.
     /// </summary>
-    /// <param name="command">Command instance</param>
-    public Task Execute(StorageService storage, SocketSlashCommand command);
+    /// <param name="storageService">Storage service</param>
+    /// <param name="discordService">Discord service</param>
+    /// <param name="command">Command that was executed</param>
+    public Task Execute(StorageService storageService, DiscordService discordService, SocketSlashCommand command);
 }
