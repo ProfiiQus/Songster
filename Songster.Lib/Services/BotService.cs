@@ -53,6 +53,10 @@ public class BotService {
         channel?.SendMessageAsync(embed: embed);
     }
 
+    public SocketUser? GetUserById(ulong userId) {
+        return _client.GetUser(userId);
+    }
+
     private async Task Client_Ready() {
         var guild = _client.GetGuild(_configuration.GuildId);
         await _slashCommandService.RegisterGuildCommands(guild);

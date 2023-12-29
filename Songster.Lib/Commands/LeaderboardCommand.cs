@@ -24,21 +24,21 @@ public class LeaderboardCommand : ICommand
         var top5 = storage.Leaderboard
             .OrderByDescending(x => x.Value)
             .Take(5);
-
         // If leaderboard is empty, append to embed that there are no players. Return.
         if(top5.Count() == 0) {
             embedBuilder.WithDescription("There are no players on the leaderboard.");
             return command.RespondAsync(embed: embedBuilder.Build());
         }
 
+        // Get the first user from the top 5 players.
         var firstUser = command.Channel.GetUserAsync(top5.First().Key).Result;
-
+        // Append the first user to the embed.
         embedBuilder.WithDescription($"🏆 **{firstUser.GlobalName}** is currently the best guesser with {top5.First().Value} points.");
         embedBuilder.WithThumbnailUrl(firstUser.GetAvatarUrl());
 
+        // Instantiate string builder for top 5 players.
         var topStringBuilder = new StringBuilder();
-
-        // Add top 5 players to the embed.
+        // Build top 5 players string.
         int index = 1;
         foreach(var player in top5) {
             var user = command.Channel.GetUserAsync(player.Key).Result;
@@ -46,6 +46,7 @@ public class LeaderboardCommand : ICommand
             index++;
         }
 
+        // Add top 5 players to the embed.
         embedBuilder.AddField("Top 3 players", topStringBuilder.ToString());
 
         // Now, Let's respond with the embed.

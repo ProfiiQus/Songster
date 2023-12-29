@@ -6,6 +6,7 @@ namespace Songster.Lib.Services;
 
 public class StorageService {
 
+    public int QueueCount => _storage.Queue.Count;
 
     /// <summary>
     /// Current user Id field wrapper.
