@@ -13,8 +13,8 @@ public class StorageModel {
     [JsonProperty(nameof(CurrentUserId))]
     public ulong CurrentUserId { get; set; } = 0;
 
-    [JsonProperty(nameof(HasGuessedToday))]
-    public Dictionary<ulong, bool> HasGuessedToday { get; set; } = new();
+    [JsonProperty(nameof(Guesses))]
+    public Dictionary<ulong, bool> Guesses { get; set; } = new();
 
     public StorageModel() {
 

@@ -54,8 +54,18 @@ class DailySongJob : IJob
     /// </remarks>
     public Task Execute(IJobExecutionContext context)
     {
-        Console.WriteLine("Running daily");
         try {
+            // Iterate all players who guessed successfully and add 2 points to them.
+            // Also add 1 point for each player who queued this song.
+            foreach (var player in _storageService.Guesses.Where(p => p.Value == true))
+            {
+                _storageService.AddPoints(_storageService.CurrentUserId, 1);
+                _storageService.AddPoints(player.Key, 2);
+            }
+
+            // Clear the stored guesses.
+            _storageService.Guesses = new();
+
             // Pop today's song from the queue.
             var song = _storageService.PopRandom();
             // Send the embed to the channel.

@@ -25,12 +25,12 @@ public class StorageService {
     /// Current dictionary of guesses.
     /// Works dynamically with storage to automatically save the value to disk.
     /// </summary>
-    public Dictionary<ulong, bool> HasGuessedToday {
+    public Dictionary<ulong, bool> Guesses {
         get {
-            return _storage.HasGuessedToday;
+            return _storage.Guesses;
         }
         set {
-            _storage.HasGuessedToday = value;
+            _storage.Guesses = value;
             Save();
         }
     }
@@ -96,8 +96,26 @@ public class StorageService {
         return song;
     }
 
+    /// <summary>
+    /// Adds the specified amount of points to the user.
+    /// </summary>
+    /// <param name="userId">User to add a point to</param>
+    /// <param name="points">Number of points to add</param>
+    public void AddPoints(ulong userId, int points) {
+        // If leaderboard does not contain the user, add it.
+        if(!_storage.Leaderboard.ContainsKey(userId)) {
+            _storage.Leaderboard.Add(userId, 0);
+        }
+
+        // Add a point to the user.
+        _storage.Leaderboard[userId] += points;
+        Save();
+    }
+
     public void Save() {
-        var json = JsonSerializer.Serialize(_storage);
+        var json = JsonSerializer.Serialize(_storage, new JsonSerializerOptions() {
+            WriteIndented = true
+        });
         File.WriteAllText("storage.json", json);
     }
 }

@@ -14,15 +14,12 @@ public static class SchedulerHelper {
     /// Schedules the daily song job every day at 10AM.
     /// </summary>
     public static async Task ScheduleDailySongJob(ServiceProvider serviceProvider) {
-        Console.WriteLine("Scheduled!");
         // Grab the Scheduler instance from the Factory
         var factory = new StdSchedulerFactory();
         var scheduler = await factory.GetScheduler();
 
         // Start the scheduler
         await scheduler.Start();
-
-        Console.WriteLine("Scheduler: " + scheduler.IsStarted);
 
         // Define the job and tie it to our DailySongJob class
         IJobDetail job = JobBuilder.Create<DailySongJob>()
@@ -33,7 +30,7 @@ public static class SchedulerHelper {
         ITrigger trigger = TriggerBuilder.Create()
             .WithIdentity("DailySongTrigger", "Songster")
             .WithSchedule(
-                CronScheduleBuilder.DailyAtHourAndMinute(1, 43)
+                CronScheduleBuilder.DailyAtHourAndMinute(3, 6)
                 .InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("Europe/Prague")))
             .ForJob(job)
             .StartNow()

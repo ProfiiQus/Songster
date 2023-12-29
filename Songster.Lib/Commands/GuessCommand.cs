@@ -16,31 +16,31 @@ public class GuessCommand : ICommand
             return;
         }
 
-        // If the user is the same one who queued the song, respond with an error.
-        if(storage.CurrentUserId == guildUser.Id) {
-            await command.RespondAsync("You can't guess the same user who queued the song.", ephemeral: true);
-            return;
-        }
-
         // If the user has already guessed today, respond with an error.
-        if(storage.HasGuessedToday.ContainsKey(command.User.Id)) {
+        if(storage.Guesses.ContainsKey(command.User.Id)) {
             await command.RespondAsync("You have already guessed today.", ephemeral: true);
             return;
         }
 
-        // Add the user to the guessed today dictionary.
-        storage.HasGuessedToday.Add(command.User.Id, true);
+        // Print that the user has placed a guess but don't disclose whether it's correct or not.
+        await command.Channel.SendMessageAsync($"<@{command.User.Id}> has placed a guess.");
 
         // Otherwise check if the user has guessed correctly.
         // Print display but don't display the result.
         if(storage.CurrentUserId == guildUser.Id) {
-            // Add point to the player leaderboard.
-            storage.Leaderboard[guildUser.Id]++;
+            // Register that the player has guessed correctly.
+            storage.Guesses.Add(command.User.Id, true);
+            storage.Save();
+
             // Respond with a success message.
-            await command.RespondAsync($"You guessed correctly!");
+            await command.RespondAsync($"You guessed correctly!", ephemeral: true);
         } else {
+            // Register that the player has guessed wrong.
+            storage.Guesses.Add(command.User.Id, false);
+            storage.Save();
+
             // Response with a failure message.
-            await command.RespondAsync($"You guessed incorrectly!");
+            await command.RespondAsync($"You guessed incorrectly!", ephemeral: true);
         }
     }
 }
