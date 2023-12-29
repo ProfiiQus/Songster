@@ -20,7 +20,8 @@ public class SlashCommandService {
     private Dictionary<string, Commands.ICommand> commandLibrary = new Dictionary<string, Commands.ICommand> {
         { "about", new AboutCommand() },
         { "queue", new QueueCommand() },
-        { "guess", new GuessCommand() }
+        { "guess", new GuessCommand() },
+        { "leaderboard", new LeaderboardCommand() }
     };
 
     /// <summary>
