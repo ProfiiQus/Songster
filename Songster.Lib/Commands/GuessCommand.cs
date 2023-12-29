@@ -28,6 +28,19 @@ public class GuessCommand : ICommand
             return;
         }
 
-        await command.RespondAsync($"You executed {command.Data.Name}, user {guildUser.Nickname}");
+        // Add the user to the guessed today dictionary.
+        storage.HasGuessedToday.Add(command.User.Id, true);
+
+        // Otherwise check if the user has guessed correctly.
+        // Print display but don't display the result.
+        if(storage.CurrentUserId == guildUser.Id) {
+            // Add point to the player leaderboard.
+            storage.Leaderboard[guildUser.Id]++;
+            // Respond with a success message.
+            await command.RespondAsync($"You guessed correctly!");
+        } else {
+            // Response with a failure message.
+            await command.RespondAsync($"You guessed incorrectly!");
+        }
     }
 }

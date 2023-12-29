@@ -35,6 +35,20 @@ public class StorageService {
         }
     }
 
+    /// <summary>
+    /// Current player point leaderboard.
+    /// Works dynamically with storage to automatically save the value to disk.
+    /// </summary>
+    public Dictionary<ulong, int> Leaderboard {
+        get {
+            return _storage.Leaderboard;
+        }
+        set {
+            _storage.Leaderboard = value;
+            Save();
+        }
+    }
+
     private StorageModel _storage;
 
     public StorageService() {
