@@ -69,8 +69,10 @@ class DailySongJob : IJob
                 .WithTitle("Queue is empty!")
                 .WithColor(Color.Red)
                 .WithDescription("❌ The queue is empty. You can queue a new song using the `/queue` command.");
-
             _bot.SendEmbed(_configuration.DailySongChannelId, embed.Build());
+
+            // Update today's user id to 0.
+            _storageService.SetCurrentUserId(0);
         }
 
         return Task.CompletedTask;
