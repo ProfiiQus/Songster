@@ -44,9 +44,12 @@ public class BotService {
             // Set the bot's activity.
             await _discordService.SetClientActivity(new Game("some absolute bangers."));
 
+            var guild = _discordService.GetGuild(_configuration.GuildId);
+            if(guild == null) throw new Exception("Configured guild not found.");
+
             // Register commands and command handler.
             _discordService.RegisterSlashCommandHandler(_slashCommandService.SlashCommandHandler);
-            await _discordService.RegisterGuildCommands(_configuration.GuildId);
+            await _discordService.RegisterGuildCommands(guild);
         });
 
         // Start the bot

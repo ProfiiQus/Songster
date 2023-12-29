@@ -3,6 +3,7 @@ using Discord.Net;
 using Discord.WebSocket;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Songster.Lib.Commands;
 using Songster.Lib.Models;
 
 namespace Songster.Lib.Services;
@@ -10,9 +11,6 @@ namespace Songster.Lib.Services;
 /// <summary>
 /// Service for interaction with Discord API.
 /// </summary>
-/// <remarks>
-/// TODO: Add exception handling when Guild is not returned.
-/// </remarks>
 public class DiscordService {
 
     /// <summary>
@@ -38,35 +36,6 @@ public class DiscordService {
     }
 
     /// <summary>
-    /// Creates a new application command.
-    /// </summary>
-    /// <param name="properties">Command to register</param>
-    /// <param name="guildId">Guild to register to command to</param>!
-    public void CreateApplicationCommandAsync(ApplicationCommandProperties properties, ulong guildId) {
-        _client.Rest.CreateGuildCommand(properties, guildId);
-    }
-
-    /// <summary>
-    /// Registers the slash command handler.
-    /// </summary>
-    /// <param name="handler">Handler function to register</param>
-    public void RegisterSlashCommandHandler(Func<SocketSlashCommand, Task> handler) {
-        _client.SlashCommandExecuted += handler;
-    }
-
-    /// <summary>
-    /// Registers the bot's event handlers and starts the bot.
-    /// </summary>
-    public async Task Start() {
-        _client.Log += Log;
-
-        await _client.LoginAsync(TokenType.Bot, _configuration.Token);
-        await _client.StartAsync();
-
-        await Task.Delay(-1);
-    }
-
-    /// <summary>
     /// Handles the client ready event.
     /// </summary>
     /// <remarks>
@@ -87,38 +56,33 @@ public class DiscordService {
     }
 
     /// <summary>
+    /// Creates a new application command.
+    /// </summary>
+    /// <param name="properties">Command to register</param>
+    /// <param name="guildId">Guild to register to command to</param>!
+    public void CreateApplicationCommandAsync(ApplicationCommandProperties properties, ulong guildId) {
+        _client.Rest.CreateGuildCommand(properties, guildId);
+    }
+
+    /// <summary>
+    /// Registers the slash command handler.
+    /// </summary>
+    /// <param name="handler">Handler function to register</param>
+    public void RegisterSlashCommandHandler(Func<SocketSlashCommand, Task> handler) {
+        _client.SlashCommandExecuted += handler;
+    }
+
+    /// <summary>
     /// Registers the guild commands.
     /// </summary>
     /// <param name="guild">The guild to register the commands to</param>
-    public async Task RegisterGuildCommands(ulong guildId) {
-        var guild = GetGuild(guildId);
+    public async Task RegisterGuildCommands(SocketGuild guild) {
         try
         {
-            var command = new SlashCommandBuilder()
-                .WithName("about")
-                .WithDescription("About the Songster bot");
-
-            await guild.CreateApplicationCommandAsync(command.Build());
-
-            command = new SlashCommandBuilder()
-                .WithName("queue")
-                .WithDescription("Queue a new banger to daily playlist")
-                .AddOption("link", ApplicationCommandOptionType.String, "Link to YouTube song video", isRequired: true);
-
-            await guild.CreateApplicationCommandAsync(command.Build());
-
-            command = new SlashCommandBuilder()
-                .WithName("guess")
-                .WithDescription("Guess who queued today's banger")
-                .AddOption("user", ApplicationCommandOptionType.User, "Who do you think queued today's banger?", isRequired: true);
-
-            await guild.CreateApplicationCommandAsync(command.Build());
-
-            command = new SlashCommandBuilder()
-                .WithName("leaderboard")
-                .WithDescription("Display's the Songster leaderboard");
-
-            await guild.CreateApplicationCommandAsync(command.Build());
+            await guild.CreateApplicationCommandAsync(CommandDefinition.AboutCommand.Build());
+            await guild.CreateApplicationCommandAsync(CommandDefinition.QueueCommand.Build());
+            await guild.CreateApplicationCommandAsync(CommandDefinition.GuessCommand.Build());
+            await guild.CreateApplicationCommandAsync(CommandDefinition.LeaderboardCommand.Build());
         }
         catch(HttpException exception)
         {
@@ -129,11 +93,23 @@ public class DiscordService {
     }
 
     /// <summary>
+    /// Registers the bot's event handlers and starts the bot.
+    /// </summary>
+    public async Task Start() {
+        _client.Log += Log;
+
+        await _client.LoginAsync(TokenType.Bot, _configuration.Token);
+        await _client.StartAsync();
+
+        await Task.Delay(-1);
+    }
+
+    /// <summary>
     /// Gets the guild by the given id.
     /// </summary>
     /// <param name="guildId">Guild Id to get</param>
     /// <returns>SocketGuild object, null if the guild was not found</returns>
-    private SocketGuild? GetGuild(ulong guildId) {
+    public SocketGuild? GetGuild(ulong guildId) {
         foreach(SocketGuild guild in _client.Guilds) {
             if(guild.Id == guildId) {
                 return guild;
@@ -162,7 +138,16 @@ public class DiscordService {
         channel?.SendMessageAsync(embed: embed);
     }
 
-    public IUser GetUser(ulong userId) {
+    /// <summary>
+    /// Gets the REST user by the given id.
+    /// </summary>
+    /// <remarks>
+    /// As this is requested with REST, cached user is not returned.
+    /// Instead a new user is requested from the Discord API.
+    /// </remarks>
+    /// <param name="userId">User Id to get</param>
+    /// <returns>User by the Id</returns>
+    public IUser GetRestUser(ulong userId) {
         return _client.Rest.GetUserAsync(userId).Result;
     }
 }

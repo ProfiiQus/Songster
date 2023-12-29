@@ -30,7 +30,7 @@ public class LeaderboardCommand : ICommand
             return command.RespondAsync(embed: embedBuilder.Build());
         }
 
-        var firstUser = discordService.GetUser(top5.First().Key);
+        var firstUser = discordService.GetRestUser(top5.First().Key);
         // Append the first user to the embed.
         embedBuilder.WithDescription($"🏆 **{firstUser.GlobalName}** is currently the best guesser with {top5.First().Value} points.");
         embedBuilder.WithThumbnailUrl(firstUser.GetAvatarUrl());
@@ -40,7 +40,7 @@ public class LeaderboardCommand : ICommand
         // Build top 5 players string.
         int index = 1;
         foreach(var player in top5) {
-            var user = discordService.GetUser(player.Key);
+            var user = discordService.GetRestUser(player.Key);
             topStringBuilder.AppendLine($"{GetRankMedal(index)} **{user.GlobalName}** - {player.Value} points");
             index++;
         }
