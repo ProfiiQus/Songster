@@ -16,12 +16,6 @@ public class BotConfiguration {
     [JsonProperty(nameof(DailySongChannelId))]
     public ulong DailySongChannelId { get; set; } = 0;
 
-    /// <summary>
-    /// The current song (the user who queued it).
-    /// </summary>
-    [JsonProperty(nameof(CurrentQueuerId))]
-    public ulong CurrentQueuerId { get; set; } = 0;
-
     public BotConfiguration() {
         // Empty constructor
     }

@@ -33,7 +33,7 @@ public static class SchedulerHelper {
         ITrigger trigger = TriggerBuilder.Create()
             .WithIdentity("DailySongTrigger", "Songster")
             .WithSchedule(
-                CronScheduleBuilder.DailyAtHourAndMinute(21, 0)
+                CronScheduleBuilder.DailyAtHourAndMinute(1, 19)
                 .InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("Europe/Prague")))
             .ForJob(job)
             .StartNow()

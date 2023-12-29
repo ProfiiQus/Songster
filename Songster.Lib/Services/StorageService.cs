@@ -53,6 +53,11 @@ public class StorageService {
         return song;
     }
 
+    public void SetCurrentUserId(ulong userId) {
+        _storage.CurrentUserId = userId;
+        Save();
+    }
+
     public void Save() {
         var json = JsonSerializer.Serialize(_storage);
         File.WriteAllText("storage.json", json);
